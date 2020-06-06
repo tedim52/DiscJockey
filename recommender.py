@@ -3,6 +3,8 @@ Hack the Northeast
 Make your own DJ
 @author: tedimitiku
 """
+
+import os
 #python data libraries
 import numpy as np
 import pandas as pd
@@ -25,8 +27,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
 #Spotify API Setup
-SPOTIPY_CLIENT_ID = "236e81909708434598e63e00fe671955"
-SPOTIPY_CLIENT_SECRET = "5d574a1eb8f940b783b72b00c5eb4658"
+SPOTIPY_CLIENT_ID = os.environ["SPOTIPY_CLIENT_ID"]
+SPOTIPY_CLIENT_SECRET = os.environ["SPOTIPY_CLIENT_SECRET"]
 cc = SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET)
 sp = spotipy.Spotify(client_credentials_manager=cc)
 
