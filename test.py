@@ -18,17 +18,11 @@ SPOTIPY_CLIENT_SECRET = "5d574a1eb8f940b783b72b00c5eb4658"
 cc = SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET)
 spotify = spotipy.Spotify(client_credentials_manager=cc)
 
-#Vaughn's Spotify playlists
-playlists = spotify.user_playlists("22ud4xauqzyrwyonwznwfscga").get("items")
-    
-non_party = playlists[0]
-party = playlists[1]
-party_playlist_id = party.get("id")
-songs_list = spotify.playlist_tracks(party_playlist_id).get("items")
-
 def getIdsandNames(playlist):
     ids = []
     song_names = []
+    playlist_id = playlist.get("id")
+    songs_list = spotify.playlist_tracks(playlist_id).get("items")
     for track in songs_list:
         track_id = track.get("track").get("id")
         song_names.append(track.get("track").get("name"))
@@ -81,7 +75,13 @@ def getAudioFeatures(ids, songNames, partystatus):
     df['party'] = party
     
     return df
-partystatus = True
+
+
+#Vaughn's Spotify playlists
+playlists = spotify.user_playlists("22ud4xauqzyrwyonwznwfscga").get("items")
+    
+non_party = playlists[0]
+party = playlists[1]
 
 party_ids, party_names = getIdsandNames(party)
 party_df = getAudioFeatures(party_ids, party_names, True)
@@ -89,10 +89,21 @@ party_df = getAudioFeatures(party_ids, party_names, True)
 non_party_ids, non_party_names = getIdsandNames(non_party)
 non_party_df = getAudioFeatures(non_party_ids, non_party_names, False)
 
-train_df = party_df.append(non_party_df)
-random_df = train_df.sample(frac = 1)
+random_df = party_df.append(non_party_df).sample(frac = 1)
 
-x_train, x_test, y_train, y_test = train_test_split(random_df.drop(['track id', 'name', 'party'], axis = 1), random_df['party'], test_size = 0.3)
+x_train, x_test, y_train, y_test = train_test_split(random_df.drop(['track id', 'name', 'party'], axis = 1), random_df['party'], test_size = 0.2)
+
+from sklearn.neighbors import KNeighborsClassifier
+model = KNeighborsClassifier(5)
+model.fit(x_train, y_train)
+preds = model.predict(x_test)
+print(accuracy_score(preds, y_test))
+
+from sklearn.linear_model import LogisticRegression
+model = LogisticRegression()
+model.fit(x_train, y_train)
+preds = model.predict(x_test)
+print(accuracy_score(preds, y_test))
 
 from sklearn.svm import SVC
 svclassifier = SVC(kernel='linear')
@@ -100,8 +111,16 @@ svclassifier.fit(x_train, y_train)
 preds = svclassifier.predict(x_test)
 print(accuracy_score(preds, y_test))
 
-from sklearn.neighbors import KNeighborsClassifier
-model = KNeighborsClassifier(5)
-model.train(x_train, y_train)
-preds = model.predict(x_test)
-print(accuracy_score(preds, y_test))
+import matplotlib.pyplot as plt
+df = x_test.copy()
+df['party'] = preds
+party_songs = df.loc[df['party'] == 1]
+non_party_songs = df.loc[df['party'] == 0]
+
+plt.scatter(party_songs['tempo'], party_songs['danceability'])
+plt.scatter(party_songs['tempo'], party_songs['acousticness'])
+plt.scatter(party_songs['tempo'], party_songs['energy'])
+plt.scatter(party_songs['tempo'], party_songs['instrumentalness'])
+plt.scatter(party_songs['tempo'], party_songs['speechiness'])
+plt.legend(['Dance', 'Acou', 'Energy', 'Instr', 'Speech'])
+plt.show()
