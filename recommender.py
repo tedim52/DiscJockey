@@ -121,16 +121,19 @@ print(confusion_matrix(y_test, y_pred2))
 song1 = song_to_json("1zi7xx7UVEFkmKfv06H8x0", "One Dance", 1)
 song2 = song_to_json("1jaTQ3nqY3oAAYyCTbIvnM", "Whats Poppin", 1)
 song3 = song_to_json("6u0dQik0aif7FQlrhycG1L", "The Morning", 0)
+song4 = song_to_json("5IRLnB7JqTMcIlMtE0Rcuv", "Reverse Faults", 0)
+song5 = song_to_json("5ehVOwEZ1Q7Ckkdtq0dY1W", "Lofi", 0)
 
 test_song = pd.DataFrame(columns=columns)
 test_song = test_song.append(song1, ignore_index=True)
 test_song = test_song.append(song2, ignore_index=True)
 test_song = test_song.append(song3, ignore_index=True)
+test_song = test_song.append(song4, ignore_index=True)
+test_song = test_song.append(song5, ignore_index=True)
 print(test_song)
 test_song = test_song.drop(["track_id", "song", "party"], axis=1)
 test_pred = classifier.predict(test_song)
 print(test_pred)
-
 
 #Visualize Data
 
