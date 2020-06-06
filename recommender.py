@@ -134,7 +134,7 @@ print(test_song)
 test_song = test_song.drop(["track_id", "song", "party"], axis=1)
 test_pred = classifier.predict(test_song)
 print(test_pred)
-
+print("for the memes")
 #Visualize Data
 
 
