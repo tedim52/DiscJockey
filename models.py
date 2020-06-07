@@ -1,30 +1,17 @@
 """
 Hack the Northeast
-Make your own DJ
-@author: tedimitiku
+How to make a personal DJ in 5 simple steps
+@author: tedimitiku, vaughncampos
 """
-
 import os
-#python data libraries
-import numpy as np
 import pandas as pd
-
-
-#spotipy info
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-
-#data visualization libraries
 import matplotlib
 import seaborn as sns
-
-#sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 
 #Spotify API Setup
 SPOTIPY_CLIENT_ID = os.environ["SPOTIPY_CLIENT_ID"]
@@ -42,7 +29,7 @@ music = pd.DataFrame(columns=columns)
 party_playlist_id = "5ge2YqUbZrmqd2Mve8Uezf?si=VVFB-RkdQMOpy1BffTeozQ"
 non_party_playlist_id = "5hCRFgctanZE1v1XzTDim4?si=M3NmQZrwTJOElCUKVYCzZg"
 
-def song_to_json(track_id, song_name, party):
+def song_to_df(track_id, song_name, party):
     song_features = sp.audio_features(track_id)[0]
     song_data = {'track_id': track_id,
                  'song': song_name,
@@ -59,27 +46,30 @@ def song_to_json(track_id, song_name, party):
                 }
     return song_data
 
-def song_features_to_df(df, playlist_id, party):
+def playlist_to_df(df, playlist_id, party):
     songs = sp.playlist_tracks(playlist_id).get("tracks").get("items")
     music_frame = df
     for song in songs:
         track = song.get("track")
         song_name = track.get("name")
         track_id = track.get("id")
-        song_data = song_to_json(track_id, song_name, party)
+        song_data = song_to_df(track_id, song_name, party)
         music_frame = music_frame.append(song_data, ignore_index=True)
 
-        #Get five more songs that spotify recommends of this song
+        #Get five more songs Spotify says is like this song
         recommendations = sp.recommendations(seed_tracks=[track_id], limit = 5).get("tracks")
         for recommendation in recommendations:
             r_song_name = recommendation.get("name")
             r_track_id = recommendation.get("id")
-            r_song_data = song_to_json(r_track_id, r_song_name, party)
+            r_song_data = song_to_df(r_track_id, r_song_name, party)
             music_frame = music_frame.append(r_song_data, ignore_index=True)
     return music_frame
 
-music = song_features_to_df(music, party_playlist_id, 1)
-music = song_features_to_df(music, non_party_playlist_id, 0)
+music = playlist_to_df(music, party_playlist_id, 1)
+#Visualize audio features of party songs
+
+
+music = playlist_to_df(music, non_party_playlist_id, 0)
 music = music.sample(frac = 1)
 music = music.reset_index();
 music = music.drop(["index"], axis = 1)
@@ -100,29 +90,43 @@ x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 
 #KNNeighborsClassifier
-classifier = KNeighborsClassifier(n_neighbors=5)
-classifier.fit(x_train, y_train)
-y_pred = classifier.predict(x_test)
+from sklearn.neighbors import KNeighborsClassifier
+kNN = KNeighborsClassifier(n_neighbors=5)
+kNN.fit(x_train, y_train)
+y_pred_kNN = kNN.predict(x_test)
 
-print(accuracy_score(y_test, y_pred))
-print(classification_report(y_test, y_pred))
-print(confusion_matrix(y_test, y_pred))
+print("Accuracy" + str(accuracy_score(y_test, y_pred_kNN)))
+print(classification_report(y_test, y_pred_kNN))
+print(confusion_matrix(y_test, y_pred_kNN))
 
 #Logistic Regression
-model = LogisticRegression()
-model.fit(x_train, y_train)
-y_pred2 = model.predict(x_test)
+from sklearn.linear_model import LogisticRegression
+lr = LogisticRegression()
+lr.fit(x_train, y_train)
+y_pred_lr = lr.predict(x_test)
 
-print(accuracy_score(y_test, y_pred2))
-print(classification_report(y_test, y_pred2))
-print(confusion_matrix(y_test, y_pred2))
+print("Accuracy" + str(accuracy_score(y_test, y_pred_lr)))
+print(classification_report(y_test, y_pred_lr))
+print(confusion_matrix(y_test, y_pred_lr))
 
-#test one dance, nonstop, the morning
-song1 = song_to_json("1zi7xx7UVEFkmKfv06H8x0", "One Dance", 1)
-song2 = song_to_json("1jaTQ3nqY3oAAYyCTbIvnM", "Whats Poppin", 1)
-song3 = song_to_json("6u0dQik0aif7FQlrhycG1L", "The Morning", 0)
-song4 = song_to_json("5IRLnB7JqTMcIlMtE0Rcuv", "Reverse Faults", 0)
-song5 = song_to_json("5ehVOwEZ1Q7Ckkdtq0dY1W", "Lofi", 0)
+#Random Tree Classifier
+from sklearn.ensemble import RandomForestClassifier
+rfc = RandomForestClassifier(max_depth=2, random_state=0)
+rfc.fit(x_train, y_train)
+y_pred_rfc = rfc.predict(x_test)
+
+print("Accuracy" + str(accuracy_score(y_test, y_pred_rfc)))
+print(classification_report(y_test, y_pred_rfc))
+print(confusion_matrix(y_test, y_pred_rfc))
+
+#Visualize audio features of predicted party songs
+
+
+song1 = song_to_df("1zi7xx7UVEFkmKfv06H8x0", "One Dance", 1)
+song2 = song_to_df("1jaTQ3nqY3oAAYyCTbIvnM", "Whats Poppin", 1)
+song3 = song_to_df("6u0dQik0aif7FQlrhycG1L", "The Morning", 0)
+song4 = song_to_df("5IRLnB7JqTMcIlMtE0Rcuv", "Reverse Faults", 0)
+song5 = song_to_df("5ehVOwEZ1Q7Ckkdtq0dY1W", "Lofi", 0)
 
 test_song = pd.DataFrame(columns=columns)
 test_song = test_song.append(song1, ignore_index=True)
@@ -130,16 +134,13 @@ test_song = test_song.append(song2, ignore_index=True)
 test_song = test_song.append(song3, ignore_index=True)
 test_song = test_song.append(song4, ignore_index=True)
 test_song = test_song.append(song5, ignore_index=True)
-print(test_song)
 test_song = test_song.drop(["track_id", "song", "party"], axis=1)
-test_pred = classifier.predict(test_song)
-print(test_pred)
-print("for the memes")
-#Visualize Data
+print(test_song)
 
-
-#Feed into models with features and label
-
-#Test accuracy of models
-
-#Find most accurate DJ
+test_pred_kNN = kNN.predict(test_song)
+test_pred_lr = lr.predict(test_song)
+test_pred_rfc = rfc.predict(test_song)
+print(test_song)
+print(test_pred_kNN)
+print(test_pred_lr)
+print(test_pred_rfc)
