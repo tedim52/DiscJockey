@@ -50,8 +50,8 @@ class DiscJockey():
     def __datafy(self):
         music_data = pd.DataFrame(columns=self.attributes)
         party_playlist_id = self.party_preference
-        non_party_playlist_id = "5hCRFgctanZE1v1XzTDim4?si=M3NmQZrwTJOElCUKVYCzZg"
         music_data = music_data.append(self.__playlist_to_df(self.party_playlist_id, 1))
+        non_party_data = pd.read_csv("/musicdata/nonpartymusicdata.csv")
         music_data = music_data.append(self.__playlist_to_df(non_party_playlist_id, 0))
         music_data = music_data.sample(frac = 1)
         music_data = music_data.reset_index()
