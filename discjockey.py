@@ -7,8 +7,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 
 #Spotify API Setup
-SPOTIPY_CLIENT_ID = os.environ["SPOTIPY_CLIENT_ID"]
-SPOTIPY_CLIENT_SECRET = os.environ["SPOTIPY_CLIENT_SECRET"]
+SPOTIPY_CLIENT_ID = "236e81909708434598e63e00fe671955"
+SPOTIPY_CLIENT_SECRET = "5d574a1eb8f940b783b72b00c5eb4658"
 cc = SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET)
 sp = spotipy.Spotify(client_credentials_manager=cc)
 
@@ -24,12 +24,12 @@ class DiscJockey():
 
     #Docstring needed
     def ask_dj(self, track_id):
-        music_data = pd.DataFrame(columns=self.attributes)
         song_data = self.__song_to_df(track_id, "", -1)
-        song_features = self.music_data.drop(["track_id", "song", "party"], axis = 1)
+        df = pd.DataFrame(song_data, index=[0])
+        song_features = df.drop(["track_id", "song", 'party'], axis = 1)
         outcome = self.model.predict(song_features)
-        party_rating = outcome['party'].values[0]
-        return True if party_rating == 1 else False
+        song_features['party'] = outcome
+        return (song_features['party'] == 1).bool()
 
     #Docstring needed
     def __create_recommender(self):
@@ -48,25 +48,24 @@ class DiscJockey():
         return model
 
     def __datafy(self):
-        music_data = pd.DataFrame(columns=self.attributes)
-        party_playlist_id = self.party_preference
-        music_data = music_data.append(self.__playlist_to_df(self.party_playlist_id, 1))
-        non_party_data = pd.read_csv("/musicdata/nonpartymusicdata.csv")
-        music_data = music_data.append(self.__playlist_to_df(non_party_playlist_id, 0))
+        music_data = pd.DataFrame(columns=self.audio_features)
+        music_data = music_data.append(self.__playlist_to_df(self.party_preference, 1))
+        non_party_data = pd.read_csv("nonpartymusicdata.csv")
+        music_data = music_data.append(non_party_data)
         music_data = music_data.sample(frac = 1)
         music_data = music_data.reset_index()
         music_data = music_data.drop(["index"], axis = 1)
         return music_data
 
     def __playlist_to_df(self, playlist_id, party):
-        music_data = pd.DataFrame(columns=self.attributes)
+        music_data = pd.DataFrame(columns=self.audio_features)
         songs = sp.playlist_tracks(playlist_id).get("tracks").get("items")
         for song in songs:
             track = song.get("track")
             song_name = track.get("name")
             track_id = track.get("id")
             song_data = self.__song_to_df(track_id, song_name, party)
-            music_frame = music_frame.append(song_data, ignore_index=True)
+            music_data = music_data.append(song_data, ignore_index=True)
 
             #Get five more songs that spotify recommends of this song
             recommendations = sp.recommendations(seed_tracks=[track_id], limit = 5).get("tracks")

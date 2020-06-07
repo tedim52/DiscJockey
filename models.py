@@ -4,15 +4,16 @@ How to make a personal DJ in 5 simple steps
 @author: tedimitiku, vaughncampos
 """
 import os
+import math
 import pandas as pd
+import numpy as np
 import matplotlib
-import seaborn as sns
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-
 #Spotify API Setup
 SPOTIPY_CLIENT_ID = os.environ["SPOTIPY_CLIENT_ID"]
 SPOTIPY_CLIENT_SECRET = os.environ["SPOTIPY_CLIENT_SECRET"]
@@ -74,7 +75,30 @@ music = playlist_to_df(music, non_party_playlist_id, 0)
 music = music.sample(frac = 1)
 music = music.reset_index();
 music = music.drop(["index"], axis = 1)
-print(music)
+music.head()
+
+#Visualizing the data
+df = music
+target = 'party'
+cols = ['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'loudness', 'speechiness', 'valence', 'tempo']
+i = 0
+nRows = math.ceil(len(cols) / 3)
+nCols = 3
+f = plt.figure(figsize=(17,15))
+
+for col in cols:
+    i += 1
+    ax = f.add_subplot(nRows * 100 + nCols * 10 + i)
+    ax.scatter(df[col],df[target], c = df[target]) #np.vectorize(color_chooser)(df[target]))
+    ax.axvline(np.mean(df[df[target] == 1][col]), c='y')
+    ax.axvline(np.mean(df[df[target] == 0][col]), c='m')
+
+    ax.set_xlabel(col)
+    ax.set_ylabel(target)
+    ax.set_title(str(col) + " vs. " + target)
+
+f.subplots_adjust(wspace = 0.2, hspace=0.3)
+plt.show()
 
 #Splitting dataframe into train and testing data
 features = music.drop(["track_id", "song", "party"], axis = 1)
