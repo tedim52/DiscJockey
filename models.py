@@ -66,14 +66,11 @@ def playlist_to_df(df, playlist_id, party):
     return music_frame
 
 music = playlist_to_df(music, party_playlist_id, 1)
-#Visualize audio features of party songs
-
-
 music = playlist_to_df(music, non_party_playlist_id, 0)
 music = music.sample(frac = 1)
 music = music.reset_index();
 music = music.drop(["index"], axis = 1)
-music.to_csv (r'/Users/tewodrosmitiku/Desktop/Hack/music/music_data.csv', index = False, header=True)
+music.to_csv (r'/Users/tewodrosmitiku/Desktop/HackTheNortheast/musicdata/music_data.csv', index = False, header=True)
 print(music)
 
 #Splitting dataframe into train and testing data
@@ -95,19 +92,11 @@ kNN = KNeighborsClassifier(n_neighbors=5)
 kNN.fit(x_train, y_train)
 y_pred_kNN = kNN.predict(x_test)
 
-print("Accuracy" + str(accuracy_score(y_test, y_pred_kNN)))
-print(classification_report(y_test, y_pred_kNN))
-print(confusion_matrix(y_test, y_pred_kNN))
-
 #Logistic Regression
 from sklearn.linear_model import LogisticRegression
 lr = LogisticRegression()
 lr.fit(x_train, y_train)
 y_pred_lr = lr.predict(x_test)
-
-print("Accuracy" + str(accuracy_score(y_test, y_pred_lr)))
-print(classification_report(y_test, y_pred_lr))
-print(confusion_matrix(y_test, y_pred_lr))
 
 #Random Tree Classifier
 from sklearn.ensemble import RandomForestClassifier
@@ -115,8 +104,17 @@ rfc = RandomForestClassifier(max_depth=2, random_state=0)
 rfc.fit(x_train, y_train)
 y_pred_rfc = rfc.predict(x_test)
 
+# Metrics for K Nearest Neighbors
+print("Accuracy" + str(accuracy_score(y_test, y_pred_kNN)))
+print(classification_report(y_test, y_pred_kNN))
+print(confusion_matrix(y_test, y_pred_kNN))
+
+# Metrics for Logistic Regression
+print("Accuracy" + str(accuracy_score(y_test, y_pred_lr)))
+print(classification_report(y_test, y_pred_lr))
+print(confusion_matrix(y_test, y_pred_lr))
+
+# Metrics for Random Tree Classifier
 print("Accuracy" + str(accuracy_score(y_test, y_pred_rfc)))
 print(classification_report(y_test, y_pred_rfc))
 print(confusion_matrix(y_test, y_pred_rfc))
-
-#Visualize audio features of predicted party songs
