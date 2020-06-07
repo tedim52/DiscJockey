@@ -7,8 +7,13 @@ For the Disc Jockey class look at discjockey.py
 For all the data we used to train and test our recommender look at the musicdata folder
 To test out our recommender look at main.py
 
-Note: 
-In order to enter a track id: Go to Spotify, click on the three dots next to the song, navigate to share, and then copy Spotify URI and take the end digits/numbers to input as a track id.
+To use:
+First input a playlist id of your playlist.  This can be done by navigating to the desired playlist and copying the last part of the url.  For example my party playlist id looks like: 4RdNpG06Gzma4AuvfES6QR?si=PhZD_sK5T5C2kxkhQH9-lQ
 
-In order to enter a playlist: Go to Spotify, click on the three dots next to the playlist, navigate to share, and then copy Spotify URI and take the end digits/numbers to input as a  playlist id.
+Then the DJ will learn from you playlist and only accept songs that are similar to your party preferences. 
 
+To get a track id, navigate to a song of your choice on spotify, then go to share>copy uri.
+The uri should look something like this: spotify:track:2374M0fQpWi3dLnB54qaLX. Then copy the last part after track:.
+so you track id should look something like this: 2374M0fQpWi3dLnB54qaLX.
+
+After inputing your party preferences and track, the DJ will tell you if he accepts your song choice!
