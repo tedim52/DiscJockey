@@ -120,27 +120,3 @@ print(classification_report(y_test, y_pred_rfc))
 print(confusion_matrix(y_test, y_pred_rfc))
 
 #Visualize audio features of predicted party songs
-
-
-song1 = song_to_df("1zi7xx7UVEFkmKfv06H8x0", "One Dance", 1)
-song2 = song_to_df("1jaTQ3nqY3oAAYyCTbIvnM", "Whats Poppin", 1)
-song3 = song_to_df("6u0dQik0aif7FQlrhycG1L", "The Morning", 0)
-song4 = song_to_df("5IRLnB7JqTMcIlMtE0Rcuv", "Reverse Faults", 0)
-song5 = song_to_df("5ehVOwEZ1Q7Ckkdtq0dY1W", "Lofi", 0)
-
-test_song = pd.DataFrame(columns=columns)
-test_song = test_song.append(song1, ignore_index=True)
-test_song = test_song.append(song2, ignore_index=True)
-test_song = test_song.append(song3, ignore_index=True)
-test_song = test_song.append(song4, ignore_index=True)
-test_song = test_song.append(song5, ignore_index=True)
-test_song = test_song.drop(["track_id", "song", "party"], axis=1)
-print(test_song)
-
-test_pred_kNN = kNN.predict(test_song)
-test_pred_lr = lr.predict(test_song)
-test_pred_rfc = rfc.predict(test_song)
-print(test_song)
-print(test_pred_kNN)
-print(test_pred_lr)
-print(test_pred_rfc)
