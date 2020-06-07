@@ -26,8 +26,12 @@ columns = ["track_id", "song", "acousticness", "danceability", "energy",
 music = pd.DataFrame(columns=columns)
 
 #Populating dataframe with song features
+
+#example party playlist: https://open.spotify.com/playlist/5ge2YqUbZrmqd2Mve8Uezf?si=mvHSkH6_R4ydd8cn9Fh_6Q
 party_playlist_id = "5ge2YqUbZrmqd2Mve8Uezf?si=VVFB-RkdQMOpy1BffTeozQ"
-non_party_playlist_id = "5hCRFgctanZE1v1XzTDim4?si=M3NmQZrwTJOElCUKVYCzZg"
+
+#non party playlist: https://open.spotify.com/playlist/1vviyyoqxJyVpnNL4Cf6Xz?si=17SoNRa-RNuMVNG60DlWEg
+non_party_playlist_id = "1vviyyoqxJyVpnNL4Cf6Xz?si=FtKKu3ICSaWPOY7st55HbQ"
 
 def song_to_df(track_id, song_name, party):
     song_features = sp.audio_features(track_id)[0]
@@ -70,7 +74,6 @@ music = playlist_to_df(music, non_party_playlist_id, 0)
 music = music.sample(frac = 1)
 music = music.reset_index();
 music = music.drop(["index"], axis = 1)
-music.to_csv (r'/Users/tewodrosmitiku/Desktop/HackTheNortheast/musicdata/music_data.csv', index = False, header=True)
 print(music)
 
 #Splitting dataframe into train and testing data

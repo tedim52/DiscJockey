@@ -32,10 +32,6 @@ class DiscJockey():
         return True if party_rating == 1 else False
 
     #Docstring needed
-    def curate(self):
-        return
-
-    #Docstring needed
     def __create_recommender(self):
         features = self.music_data.drop(["track_id", "song", "party"], axis = 1)
         target = self.music_data["party"]
