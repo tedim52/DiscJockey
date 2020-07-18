@@ -11,7 +11,7 @@ To create your own DJ, take a look at and run main.py
 
 To use:
 
-1) Create a conda environment using requirements.txt file on your computer. 
+1) Create a conda environment using requirements.txt file on your computer and fork this repo.
 2) Run main.py.
 3) Get your party playlist id and give it to the DJ.
 Tog get a playlist id, navigate to your desired party playlist on spotify and copying the last part of the url.  For example my party playlist id looks like: 4RdNpG06Gzma4AuvfES6QR?si=PhZD_sK5T5C2kxkhQH9-lQ
