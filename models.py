@@ -1,10 +1,12 @@
-"""
-Hack the Northeast
-How to make a personal DJ in 5 simple steps
-@author: tedimitiku, vaughncampos
-"""
+
+# Hack the Northeast
+# How to make a personal DJ in 5 simple steps
+# @author: tedimitiku, vaughncampos
+
 import os
 import math
+
+# Data Libraries
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -12,9 +14,12 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Spotify Web API Wrapper - Spotipy
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-#Spotify API Setup
+
+#Spotify Web API Setup
 SPOTIPY_CLIENT_ID = os.environ["SPOTIPY_CLIENT_ID"]
 SPOTIPY_CLIENT_SECRET = os.environ["SPOTIPY_CLIENT_SECRET"]
 cc = SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET)
@@ -26,12 +31,12 @@ columns = ["track_id", "song", "acousticness", "danceability", "energy",
             "valence", "tempo", "party"]
 music = pd.DataFrame(columns=columns)
 
-#Populating dataframe with song features
+# Populating dataframe with song features
 
-#example party playlist: https://open.spotify.com/playlist/5ge2YqUbZrmqd2Mve8Uezf?si=mvHSkH6_R4ydd8cn9Fh_6Q
+# example party playlist: https://open.spotify.com/playlist/5ge2YqUbZrmqd2Mve8Uezf?si=mvHSkH6_R4ydd8cn9Fh_6Q
 party_playlist_id = "5ge2YqUbZrmqd2Mve8Uezf?si=VVFB-RkdQMOpy1BffTeozQ"
 
-#non party playlist: https://open.spotify.com/playlist/1vviyyoqxJyVpnNL4Cf6Xz?si=17SoNRa-RNuMVNG60DlWEg
+# non-party playlist: https://open.spotify.com/playlist/1vviyyoqxJyVpnNL4Cf6Xz?si=17SoNRa-RNuMVNG60DlWEg
 non_party_playlist_id = "1vviyyoqxJyVpnNL4Cf6Xz?si=FtKKu3ICSaWPOY7st55HbQ"
 
 def song_to_df(track_id, song_name, party):
@@ -77,7 +82,7 @@ music = music.reset_index();
 music = music.drop(["index"], axis = 1)
 music.head()
 
-#Visualizing the data
+# Visualizing the data
 df = music
 target = 'party'
 cols = ['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'loudness', 'speechiness', 'valence', 'tempo']
@@ -100,32 +105,34 @@ for col in cols:
 f.subplots_adjust(wspace = 0.2, hspace=0.3)
 plt.show()
 
-#Splitting dataframe into train and testing data
+# Splitting dataframe into train and testing data
 features = music.drop(["track_id", "song", "party"], axis = 1)
 target = music["party"]
 x_train, x_test, y_train, y_test = train_test_split(features, target, test_size = 0.3, random_state = 42)
 y_train = y_train.astype("int")
 y_test = y_test.astype("int")
 
-#Normalizing values
+# Normalizing values
 scaler = StandardScaler()
 scaler.fit(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 
-#KNNeighborsClassifier
+# Testing Several Classification Models
+
+# KNNeighborsClassifier
 from sklearn.neighbors import KNeighborsClassifier
 kNN = KNeighborsClassifier(n_neighbors=5)
 kNN.fit(x_train, y_train)
 y_pred_kNN = kNN.predict(x_test)
 
-#Logistic Regression
+# Logistic Regression
 from sklearn.linear_model import LogisticRegression
 lr = LogisticRegression()
 lr.fit(x_train, y_train)
 y_pred_lr = lr.predict(x_test)
 
-#Random Tree Classifier
+# Random Tree Classifier
 from sklearn.ensemble import RandomForestClassifier
 rfc = RandomForestClassifier(max_depth=2, random_state=0)
 rfc.fit(x_train, y_train)

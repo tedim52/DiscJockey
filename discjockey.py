@@ -12,8 +12,20 @@ SPOTIPY_CLIENT_SECRET = "5d574a1eb8f940b783b72b00c5eb4658"
 cc = SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET)
 sp = spotipy.Spotify(client_credentials_manager=cc)
 
-#Docstring needed
+
 class DiscJockey():
+    """ A class that imitates a DJ.
+
+    You can tell this DJ what your favorite party songs are and it will learn your preferences
+    so that when your party attendees suggest songs, this DJ knows which ones to add to the queue
+    and which ones to throw out.
+
+    Attributes:
+    party_preference: A Spotify playlist id containing your favorite party songs.
+    audio_features: Audio features this DJ uses to classify your preferences.
+    music_data: The DJ's song library.
+    model: The recommender.
+    """
     def __init__(self, playlist_id):
         self.party_preference = playlist_id
         self.audio_features = ["track_id", "song", "acousticness", "danceability", "energy",
@@ -22,8 +34,8 @@ class DiscJockey():
         self.music_data = self.__datafy()
         self.model = self.__create_recommender()
 
-    #Docstring needed
     def ask_dj(self, track_id):
+        """ Takes in a Spotify track and returns a yes or no from the DJ based on your preferences."""
         song_data = self.__song_to_df(track_id, "", -1)
         df = pd.DataFrame(song_data, index=[0])
         song_features = df.drop(["track_id", "song", 'party'], axis = 1)
@@ -31,8 +43,8 @@ class DiscJockey():
         song_features['party'] = outcome
         return (song_features['party'] == 1).bool()
 
-    #Docstring needed
     def __create_recommender(self):
+        """ Creates the the DJ recommender """
         features = self.music_data.drop(["track_id", "song", "party"], axis = 1)
         target = self.music_data["party"]
         x_train, x_test, y_train, y_test = train_test_split(features, target, test_size = 0.3, random_state = 42)
