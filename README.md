@@ -5,8 +5,8 @@
 We setout to build a content based recommender system that could act as your own personal DJ.
 
 For information on how we created the recommender through data analysis, visualization, and training models, take a look at models.ipynb.
-To explore how we created the DJ, take a look take a discjockey.py
-For all the data we used to train and test our recommender look at the musicdata folder.
+To explore how we created the DJ, take at discjockey.py
+For all the data we used to train and test our recommender, look at the musicdata folder.
 To create your own DJ, take a look at and run main.py
 
 To use:
