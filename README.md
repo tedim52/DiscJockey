@@ -1,7 +1,5 @@
 # How to make a personal DJ in 5 simple steps
 
-## Hack The Northeast hackathon submission.
-
 ### Created by @tedimitiku and @vaughncampos
 
 We setout to build a content based recommender system that could act as your own personal DJ.
@@ -26,3 +24,5 @@ The URI should look something like this: spotify:track:2374M0fQpWi3dLnB54qaLX. C
 so your track id should look something like this: 2374M0fQpWi3dLnB54qaLX.
 
 After inputing your party preferences and track, the DJ will tell you if he accepts your song choice or not!
+
+***Hack The Northeast Hackathon submission***
