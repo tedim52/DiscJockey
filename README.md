@@ -1,8 +1,8 @@
-#How to make a personal DJ in 5 simple steps
+# How to make a personal DJ in 5 simple steps
 
-#Hack The Northeast hackathon
+## Hack The Northeast hackathon submission.
 
-Created by @tedimitiku and @vaughncampos
+### Created by @tedimitiku and @vaughncampos
 
 We setout to build a content based recommender system that could act as your own personal DJ.
 
